@@ -1,10 +1,12 @@
 ### GO SHOP
 
-##### Stacks
+##### 🪐 Stacks
 
-GO: @1.19 Version
-ECHO: SERVER FRAMEWORK
-GORM: ORM Library
+- 🪐Go: `@1.19 Version`
+
+- 🪐Echo: `SERVER FRAMEWORK`
+
+- 🪐Gorm: `ORM Library`
 
 ### Clean Architecture
 
