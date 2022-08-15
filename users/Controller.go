@@ -36,3 +36,13 @@ func (controller Controller) Login(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, res)
 }
+
+func (controller Controller) FindUserById(c echo.Context) error {
+	userId := c.Param("user_id")
+	res, err := controller.service.FindUserOneByID(userId)
+
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, res)
+}

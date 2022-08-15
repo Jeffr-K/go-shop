@@ -2,44 +2,72 @@ package user
 
 import (
 	"errors"
+	"gorm.io/gorm"
 )
 
 var ErrNotFoundUser = errors.New("not found user")
 
-type Repository struct {
-	data map[string]User
+type UserRepository struct {
+	Repository *gorm.DB
 }
 
-func NewRepository(data map[string]User) *Repository {
-	return &Repository{data: data}
+func (UserRepository) NewUserRepositoryImpl(Repository *gorm.DB) *UserRepository {
+	return &UserRepository{Repository}
 }
 
-func (r *Repository) Create(user User) {
-	r.data[user.ID] = user
+func (userRepository *UserRepository) FindAll() ([]*User, error) {
+	var users []*User
+	err := userRepository.Repository.Preload("Cards").Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
-func (r *Repository) GetByName(userName string) (User, error) {
-	for _, user := range r.data {
-		if user.UserName == userName {
+func (userRepository *UserRepository) FindById(id string) (*User, error) {
+	var user = new(User)
+	err := userRepository.Repository.Preload("Boards").First(&user, id).Error
+
+	if err != nil {
+		return nil, ErrNotFoundUser
+	}
+	return user, nil
+}
+
+func (userRepository *UserRepository) FindByName(userName string) (*User, error) {
+	var user = new(User)
+	err := userRepository.Repository.Preload("Boards").First(&user, userName).Error
+
+	if err != nil {
+		return nil, ErrNotFoundUser
+	}
+	return user, nil
+}
+
+func (userRepository *UserRepository) DeleteById(id int) error {
+
+	userRepository.Repository.Transaction(func(tx *gorm.DB) error {
+		err := tx.Delete(&User{}, id).Error
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	return nil
+}
+
+func (userRepository *UserRepository) Save(user *User) (*User, error) {
+	var userCheck = new(User)
+	err1 := userRepository.Repository.Where("name = ?", user.UserName).First(&userCheck).Error
+	if err1 != nil {
+		if errors.Is(err1, gorm.ErrRecordNotFound) {
+			err2 := userRepository.Repository.Create(user).Error
+			if err2 != nil {
+				return nil, err2
+			}
 			return user, nil
 		}
 	}
-	return User{}, ErrNotFoundUser
-}
-
-func (r *Repository) GetById(id string) (User, error) {
-	for _, user := range r.data {
-		if user.ID == id {
-			return user, nil
-		}
-	}
-	return User{}, ErrNotFoundUser
-}
-
-func (r *Repository) Update(user User) {
-	r.data[user.ID] = user
-}
-
-func (r *Repository) DeleteById(id string) {
-	delete(r.data, id)
+	return nil, errors.New("duplicate user")
 }
