@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  api:
+    container_name: go-shop-api
+    build:
+      context: ""
+      dockerfile: Dockerfile
+    ports:
+      - "9999:9999"
+    volumes:
+      - ./:/app/
+    environment:
+      - POSTGRES_DB=go-shop
+      - POSTGRES_USER=shop
+      - POSTGRES_PASSWORD=shop1234
+      - POSTGRES_HOST=go-shop-postgres
+      - POSTGRES_PORT=5432
