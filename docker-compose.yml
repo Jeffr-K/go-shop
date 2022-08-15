@@ -4,12 +4,10 @@ services:
   api:
     container_name: go-shop-api
     build:
-      context: ""
+      context: .
       dockerfile: Dockerfile
     ports:
-      - "9999:9999"
-    volumes:
-      - ./:/app/
+      - "4000:4000"
     environment:
       - POSTGRES_DB=go-shop
       - POSTGRES_USER=shop
