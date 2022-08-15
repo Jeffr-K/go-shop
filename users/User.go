@@ -6,7 +6,7 @@ type User struct {
 	Password string
 }
 
-func (u User) CreateUser(user User) User {
+func (u User) CreateUserModel(user User) User {
 	newUser := User{
 		ID:       user.ID,
 		UserName: user.UserName,

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestCreateUser(t *testing.T) {
+func TestCreateUserModel(t *testing.T) {
 
 	t.Run("유저 한명을 생성해야 합니다.", func(t *testing.T) {
 		uuid := uuid.New().String()
