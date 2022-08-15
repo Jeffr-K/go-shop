@@ -8,9 +8,19 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4000:4000"
+    depends_on:
+      - db
+  db:
+    container_name: go-shop-db
+    image: postgres:14.2
+    volumes:
+      - ./docker/data/postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=go-shop
       - POSTGRES_USER=shop
       - POSTGRES_PASSWORD=shop1234
       - POSTGRES_HOST=go-shop-postgres
-      - POSTGRES_PORT=5432
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8MB4
+    ports:
+      - "5432:5432"
+
