@@ -1,10 +1,10 @@
-package user
+package test
 
 import "testing"
 
-func TestCreateUser(t *testing.T) {}
+func TestCreateUserService(t *testing.T) {}
 
-func TestLogin(t *testing.T) {}
+func TestLoginService(t *testing.T) {}
 
 func TestGetUserOneByName(t *testing.T) {}
 

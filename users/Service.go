@@ -12,24 +12,28 @@ var (
 )
 
 type Service struct {
-	repository Repository
+	Repository UserRepository
 }
 
-func NewService(repository Repository) *Service {
-	return &Service{repository: repository}
+func NewService(repository UserRepository) *Service {
+	return &Service{Repository: repository}
 }
 
 func (s *Service) CreateUser(request dto.CreateUserRequest) (dto.CreateUserResponse, error) {
 	newUser := User{uuid.New().String(), request.UserName, request.Password}
-	s.repository.Create(newUser)
+	save, err := s.Repository.Save(&newUser)
+	if err != nil {
+		return dto.CreateUserResponse{}, err
+	}
+
 	return dto.CreateUserResponse{
-		ID:       newUser.ID,
+		ID:       save.UUID,
 		UserName: newUser.UserName,
 	}, nil
 }
 
 func (s Service) Login(name string, password string) (dto.LoginResponse, error) {
-	user, err := s.repository.GetByName(name)
+	user, err := s.Repository.FindByName(name)
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}
@@ -45,24 +49,24 @@ func (s Service) Login(name string, password string) (dto.LoginResponse, error) 
 	return dto.LoginResponse{Token: token.Token, Username: name}, nil
 }
 
-func (s *Service) GetUserOneByName(name string) (dto.GetUserResponse, error) {
-	foundUser, err := s.repository.GetByName(name)
+func (s *Service) FindUserOneByName(name string) (dto.GetUserResponse, error) {
+	foundUser, err := s.Repository.FindByName(name)
 	if err != nil {
 		return dto.GetUserResponse{}, err
 	}
 	return dto.GetUserResponse{
-		ID:       foundUser.ID,
+		ID:       foundUser.UUID,
 		UserName: foundUser.UserName,
 	}, nil
 }
 
-func (s *Service) GetUserOneByID(id string) (dto.GetUserResponse, error) {
-	foundUser, err := s.repository.GetById(id)
+func (s *Service) FindUserOneByID(id string) (dto.GetUserResponse, error) {
+	foundUser, err := s.Repository.FindById(id)
 	if err != nil {
 		return dto.GetUserResponse{}, err
 	}
 	return dto.GetUserResponse{
-		ID:       foundUser.ID,
+		ID:       foundUser.UUID,
 		UserName: foundUser.UserName,
 	}, nil
 }

@@ -4,15 +4,22 @@ services:
   api:
     container_name: go-shop-api
     build:
-      context: ""
+      context: .
       dockerfile: Dockerfile
     ports:
-      - "9999:9999"
+      - "4000:4000"
+    depends_on:
+      - db
+  db:
+    container_name: go-shop-db
+    image: postgres:14.2
     volumes:
-      - ./:/app/
+      - ./docker/data/postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=go-shop
       - POSTGRES_USER=shop
       - POSTGRES_PASSWORD=shop1234
       - POSTGRES_HOST=go-shop-postgres
-      - POSTGRES_PORT=5432
+    ports:
+      - "5432:5432"
+

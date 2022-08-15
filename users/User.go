@@ -1,14 +1,14 @@
 package user
 
 type User struct {
-	ID       string
-	UserName string
-	Password string
+	UUID     string `gorm:"primaryKey"`
+	UserName string `gorm:"not_null"`
+	Password string `gorm:"not_null"`
 }
 
-func (u User) CreateUserModel(user User) User {
+func (u User) CreateUser(user User) User {
 	newUser := User{
-		ID:       user.ID,
+		UUID:     user.UUID,
 		UserName: user.UserName,
 		Password: user.Password,
 	}

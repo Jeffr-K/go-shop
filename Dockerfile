@@ -1,11 +1,18 @@
 #Dockerfile
 FROM golang:1.19-alpine
 
+RUN apk update && apk upgrade && apk add git
+
 WORKDIR /app
 
-RUN apk update && \
-    apk add git && \
-    go install github.com/cespare/reflex@latest # Hot Reload module
+COPY go.mod go.sum ./
 
-EXPOSE 9999
-CMD ["reflex", "-c", "reflex.conf"]
+RUN go mod download
+
+COPY . .
+
+RUN go build -o main .
+
+EXPOSE 4000
+
+CMD ["go","run","./cmd/main.go"]

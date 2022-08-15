@@ -7,11 +7,11 @@ import (
 )
 
 type Controller struct {
-	service Service
+	Service Service
 }
 
 func NewController(service Service) *Controller {
-	return &Controller{service: service}
+	return &Controller{Service: service}
 }
 
 func (controller Controller) CreateUser(c echo.Context) error {
@@ -19,7 +19,7 @@ func (controller Controller) CreateUser(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		return err
 	}
-	res, err := controller.service.CreateUser(req)
+	res, err := controller.Service.CreateUser(req)
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,17 @@ func (controller Controller) Login(c echo.Context) error {
 	userName := c.FormValue("user_name")
 	password := c.FormValue("password")
 
-	res, err := controller.service.Login(userName, password)
+	res, err := controller.Service.Login(userName, password)
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, res)
+}
+
+func (controller Controller) FindUserById(c echo.Context) error {
+	userId := c.Param("user_id")
+	res, err := controller.Service.FindUserOneByID(userId)
+
 	if err != nil {
 		return err
 	}

@@ -16,6 +16,8 @@
 
 - ginkgo + gomega
 - github.com/maxbrunsfeld/counterfeiter
+- mock vs stub
+
 
 # References
 
