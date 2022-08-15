@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	user "github.com/lambsroad/go-shop/users"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"log"
 	"net/http"
 )
@@ -16,13 +17,8 @@ type Server struct {
 }
 
 func NewDefaultServer() *Server {
-	data := map[string]user.User{}
-	userRepository := user.NewRepository(data)
-	userService := user.NewService(*userRepository)
-	userController := user.NewController(*userService)
 	return &Server{
-		userController: *userController,
-	}
+		userController: *user.NewController(*user.NewService(user.UserRepository{}))}
 }
 
 func (s *Server) Run() {
@@ -40,9 +36,12 @@ func (s *Server) Run() {
 
 func (s *Server) Routes(e *echo.Echo) {
 	g := e.Group("/v1")
+	g.GET("/swagger/*", echoSwagger.WrapHandler)
 	RouteUser(g, s.userController)
 }
 
 func RouteUser(e *echo.Group, c user.Controller) {
+	e.POST("/create", c.CreateUser)
 	e.POST("/login", c.Login)
+	e.GET("/user_id", c.FindUserById)
 }
