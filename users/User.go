@@ -1,7 +1,7 @@
 package user
 
 type User struct {
-	ID       string
-	UserName string
-	Password string
+	UUID     string `gorm:"primaryKey"`
+	UserName string `gorm:"not_null"`
+	Password string `gorm:"not_null"`
 }
