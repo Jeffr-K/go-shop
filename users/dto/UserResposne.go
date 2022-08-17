@@ -9,8 +9,9 @@ type CreateUserResponse struct {
 }
 
 type LoginResponse struct {
-	Token    jwt.StandardClaims `json:"token,omitempty"`
-	Username string
+	Token        jwt.StandardClaims `json:"token,omitempty"`
+	RefreshToken jwt.StandardClaims
+	Username     string
 }
 
 type UpdateUserResponse struct {

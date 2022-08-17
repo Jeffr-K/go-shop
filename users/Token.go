@@ -10,6 +10,11 @@ type ResponseTokenDto struct {
 	Token    jwt.StandardClaims
 }
 
+type ResponseRefreshTokenDto struct {
+	UserName     string `json:"user_name" example:"ash"`
+	RefreshToken jwt.StandardClaims
+}
+
 func CreateToken(name string) ResponseTokenDto {
 	return ResponseTokenDto{
 		name,
@@ -19,6 +24,19 @@ func CreateToken(name string) ResponseTokenDto {
 	}
 }
 
+func CreateRefreshToken(name string) ResponseRefreshTokenDto {
+	return ResponseRefreshTokenDto{
+		name,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+		},
+	}
+}
+
 func NewUserToken(name string) (ResponseTokenDto, error) {
 	return CreateToken(name), nil
+}
+
+func NewUserRefreshToken(name string) (ResponseRefreshTokenDto, error) {
+	return CreateRefreshToken(name), nil
 }

@@ -41,12 +41,18 @@ func (s Service) Login(name string, password string) (dto.LoginResponse, error) 
 	if user.Password != password {
 		return dto.LoginResponse{}, err
 	}
-	token, err := NewUserToken(user.UserName)
+	token, tokenErr := NewUserToken(user.UserName)
 
-	if err != nil {
-		return dto.LoginResponse{}, err
+	if tokenErr != nil {
+		return dto.LoginResponse{}, tokenErr
 	}
-	return dto.LoginResponse{Token: token.Token, Username: name}, nil
+
+	refreshToken, refreshTokenErr := NewUserRefreshToken(user.UserName)
+	if refreshTokenErr != nil {
+		return dto.LoginResponse{}, refreshTokenErr
+	}
+
+	return dto.LoginResponse{Token: token.Token, RefreshToken: refreshToken.RefreshToken, Username: name}, nil
 }
 
 func (s *Service) FindUserOneByName(name string) (dto.GetUserResponse, error) {
