@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/lambsroad/go-shop/users/dto"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -20,7 +21,12 @@ func NewService(repository UserRepository) *Service {
 }
 
 func (s *Service) CreateUser(request dto.CreateUserRequest) (dto.CreateUserResponse, error) {
-	newUser := User{uuid.New().String(), request.UserName, request.Password}
+	bytes, passwordHashErr := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+	if passwordHashErr != nil {
+		return dto.CreateUserResponse{}, passwordHashErr
+	}
+
+	newUser := User{uuid.New().String(), request.UserName, string(bytes)}
 	save, err := s.repository.Save(&newUser)
 	if err != nil {
 		return dto.CreateUserResponse{}, err
