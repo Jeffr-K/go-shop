@@ -21,6 +21,10 @@ func NewService(repository UserRepository) *Service {
 }
 
 func (s *Service) CreateUser(request dto.CreateUserRequest) (dto.CreateUserResponse, error) {
+	if request.UserName == "" || request.Password == "" {
+		return dto.CreateUserResponse{}, errors.New("please provide name and password credentials")
+	}
+
 	bytes, passwordHashErr := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if passwordHashErr != nil {
 		return dto.CreateUserResponse{}, passwordHashErr
@@ -39,6 +43,10 @@ func (s *Service) CreateUser(request dto.CreateUserRequest) (dto.CreateUserRespo
 }
 
 func (s Service) Login(name string, password string) (dto.LoginResponse, error) {
+	if name == "" || password == "" {
+		return dto.LoginResponse{}, errors.New("please provide name and password credentials")
+	}
+
 	user, err := s.repository.FindByName(name)
 	if err != nil {
 		return dto.LoginResponse{}, err
