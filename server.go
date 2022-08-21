@@ -41,7 +41,7 @@ func (s *Server) Routes(e *echo.Echo) {
 }
 
 func RouteUser(e *echo.Group, c user.Controller) {
-	e.POST("/create", c.CreateUser)
-	e.POST("/login", c.Login)
-	e.GET("/user_id", c.FindUserById)
+	e.POST("user/create", c.CreateUser)
+	e.POST("user/login", c.Login)
+	e.GET("user/user_id", c.FindUserById)
 }
